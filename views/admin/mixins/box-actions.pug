@@ -1,0 +1,16 @@
+mixin box-actions(link)
+  div(
+    class="input-group" 
+    box-actions=link
+  )
+    select(name="type" class="custom-select")
+      option(value='' disabled selected) Chọn hành động...
+      option(value='active') Hoạt động
+      option(value='inactive') Dừng hoạt động
+      option(value='delete') Xóa
+      option(value='change-position') Thay đổi vị trí
+    .input-group-append
+      button(
+        class="btn btn-success"
+        type='button'
+      ) Áp dụng
