@@ -7,6 +7,7 @@ include ../../mixins/search.pug
 include ../../mixins/pagination.pug
 include ../../mixins/box-actions.pug
 include ../../mixins/alert.pug
+include ../../mixins/sort.pug
 
 block main
 
@@ -53,13 +54,7 @@ block main
           ) + Thêm mới
         
         .col-4
-          select(class="form-control" sort-select)
-            option(value="position-desc") Vị trí giảm dần
-            option(value="position-asc") Vị trí tăng dần
-            option(value="price-desc") Giá giảm dần
-            option(value="price-asc") Giá tăng dần
-            option(value="title-desc") Tiêu đề từ Z đến A
-            option(value="title-asc") Tiêu đề từ A đến Z
+          +sort()   
 
   .card.mb-3
     .card-header Danh sách

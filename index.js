@@ -8,6 +8,7 @@ const flash = require('express-flash');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const methodOverride = require('method-override');
+const path = require('path');
 
 //nhung dotenv
 require("dotenv").config();
@@ -40,6 +41,9 @@ app.use(bodyParser.json());
 app.use(cookieParser('JKSLSF'));
 app.use(session({ cookie: { maxAge: 60000 }}));
 app.use(flash());
+
+// TinyMCE
+app.use('/tinymce', express.static(path.join(__dirname, 'node_modules', 'tinymce')));
 
 //dung duoc file tinh
 // app.use(express.static("public")); local

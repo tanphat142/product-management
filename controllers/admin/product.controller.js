@@ -53,6 +53,7 @@ module.exports.index = async (req, res) => {
     const sortKey = req.query.sortKey;
     const sortValue = req.query.sortValue;
 
+    // truyen 1 string thi phai dung []
     sort[sortKey] = sortValue;
   } else {
     sort["position"] = "desc";

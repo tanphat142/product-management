@@ -201,6 +201,7 @@ if (listButtonDelete.length > 0) {
 
 // Sắp xếp
 const sortSelect = document.querySelector("[sort-select]");
+const sortClear = document.querySelector("[sort-clear]");
 if (sortSelect) {
   let url = new URL(location.href); // Nhân bản url
 
@@ -222,6 +223,14 @@ if (sortSelect) {
 
     location.href = url.href;
   });
+
+  // xoa sắp xếp
+  sortClear.addEventListener("click", () => {
+    url.searchParams.delete("sortKey");
+    url.searchParams.delete("sortValue");
+
+    location.href = url.href;
+  })
 
   // Hiển thị lựa chọn mặc định
   const sortKeyCurrent = url.searchParams.get("sortKey");
