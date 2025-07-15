@@ -87,15 +87,15 @@ if (boxActions) {
     if (listInputChecked.length > 0) {
       const ids = [];
       listInputChecked.forEach((input) => {
-
         const id = input.value;
-
 
         // Trường hợp thay đổi vị trí
         if (status == "change-position") {
           // closest("tr") để đang đứng từ td của input ra thằng cha tr để truy cập đến input position
-          const position = input.closest("tr").querySelector("[input-position]").value;
-          
+          const position = input
+            .closest("tr")
+            .querySelector("[input-position]").value;
+
           ids.push(`${id}-${position}`);
         } else {
           ids.push(id);
@@ -198,3 +198,36 @@ if (listButtonDelete.length > 0) {
 //   });
 // }
 // Hết Đổi vị trí
+
+// Sắp xếp
+const sortSelect = document.querySelector("[sort-select]");
+if (sortSelect) {
+  let url = new URL(location.href); // Nhân bản url
+
+  // Bắt sự kiện onChange
+  sortSelect.addEventListener("change", () => {
+    const value = sortSelect.value;
+
+    if (value) {
+      const [sortKey, sortValue] = value.split("-");
+      console.log(sortKey);
+      console.log(sortValue);
+
+      url.searchParams.set("sortKey", sortKey);
+      url.searchParams.set("sortValue", sortValue);
+    } else {
+      url.searchParams.delete("sortKey");
+      url.searchParams.delete("sortValue");
+    }
+
+    location.href = url.href;
+  });
+
+  // Hiển thị lựa chọn mặc định
+  const sortKeyCurrent = url.searchParams.get("sortKey");
+  const sortValueCurrent = url.searchParams.get("sortValue");
+  if (sortKeyCurrent && sortValueCurrent) {
+    sortSelect.value = `${sortKeyCurrent}-${sortValueCurrent}`;
+  }
+}
+// Hết Sắp xếp

@@ -3,12 +3,20 @@ const router = express.Router();
 
 // multer để upload file
 const multer = require("multer");
-const storage = require("../../helpers/storageMulter")(); // hàm này dùng để lưu file vào thư mục ./public/uploads/ và đổi tên file
-const upload = multer({ storage: storage });
+
+// thư viện multer dùng để upload file va upload
+// const storage = require("../../helpers/storageMulter")(); // hàm này dùng để lưu file vào thư mục ./public/uploads/ và đổi tên file
+
+// const upload = multer({ storage: storage });
+
+//dung ben cloudinary
+const upload = multer();
 
 const controller = require("../../controllers/admin/product.controller");
 
 const validate = require("../../validates/admin/product.validate");
+
+const uploadCloud = require("../../‎middleware/admin/uploadCloud.middleware");
 
 router.get("/", controller.index);
 
@@ -33,6 +41,8 @@ router.get("/create", controller.create);
 router.post(
   "/create",
   upload.single("thumbnail"),
+  //ham de up load len cloudinary
+  uploadCloud.uploadSingle,
   //middleware validate(trung gian A->C thì phải đi qua B, B là validate)
   validate.createPost,
   controller.createPost
@@ -42,7 +52,8 @@ router.get("/edit/:id", controller.edit);
 
 router.patch(
   "/edit/:id",
-  upload.single('thumbnail'),
+  upload.single("thumbnail"),
+  uploadCloud.uploadSingle,
   validate.createPost,
   controller.editPatch
 );

@@ -46,12 +46,23 @@ module.exports.index = async (req, res) => {
   );
   // Hết Phân trang
 
+  // Sắp xếp
+  const sort = {};
+
+  if (req.query.sortKey && req.query.sortValue) {
+    const sortKey = req.query.sortKey;
+    const sortValue = req.query.sortValue;
+
+    sort[sortKey] = sortValue;
+  } else {
+    sort["position"] = "desc";
+  }
+  // Hết Sắp xếp
+
   const products = await Product.find(find)
     .limit(pagination.limitItems)
     .skip(pagination.skip)
-    .sort({
-      position: "desc",
-    });
+    .sort(sort);
 
   res.render("admin/pages/products/index", {
     pageTitle: "Danh sách sản phẩm",
@@ -235,9 +246,10 @@ module.exports.createPost = async (req, res) => {
 
   // /uploads/${req.file.filename} la đường dẫn để hiển thị ảnh
 
-  if (req.file) {
-    req.body.thumbnail = `/uploads/${req.file.filename}`;
-  }
+  // local
+  // if (req.file) {
+  //   req.body.thumbnail = `/uploads/${req.file.filename}`;
+  // }
 
   //  tạo ở phía Model
   const record = new Product(req.body);
@@ -272,13 +284,14 @@ module.exports.edit = async (req, res) => {
 
 // [PATCH] /admin/products/edit/:id
 module.exports.editPatch = async (req, res) => {
-  const referer = req.get("referer"); 
+  const referer = req.get("referer");
   try {
     const id = req.params.id;
 
-    if (req.file && req.file.filename) {
-      req.body.thumbnail = `/uploads/${req.file.filename}`;
-    }
+    //local
+    // if (req.file && req.file.filename) {
+    //   req.body.thumbnail = `/uploads/${req.file.filename}`;
+    // }
 
     req.body.price = parseInt(req.body.price);
     req.body.discountPercentage = parseInt(req.body.discountPercentage);
@@ -313,13 +326,13 @@ module.exports.detail = async (req, res) => {
 
     const product = await Product.findOne({
       _id: id,
-      deleted: false
+      deleted: false,
     });
 
-    if(product) {
+    if (product) {
       res.render("admin/pages/products/detail", {
         pageTitle: product.title,
-        product: product
+        product: product,
       });
     } else {
       res.redirect(`/${systemConfig.prefixAdmin}/products`);
@@ -327,4 +340,4 @@ module.exports.detail = async (req, res) => {
   } catch (error) {
     res.redirect(`/${systemConfig.prefixAdmin}/products`);
   }
-}
+};
