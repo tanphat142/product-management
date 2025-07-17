@@ -2,10 +2,10 @@ extends ../../layouts/default.pug
 include ../../mixins/select-tree.pug
 
 block main
-  h1 #{pageTitle}
+  h1(class="mb-4") #{pageTitle}
 
   form(
-    action=`/${prefixAdmin}/products-category/create`
+    action=`/${prefixAdmin}/products-category/edit/${category.id}?_method=PATCH`
     method="POST"
     enctype="multipart/form-data"
   )
@@ -17,17 +17,18 @@ block main
         id="title"
         name="title"
         required
+        value=category.title
       )
     div(class="form-group")
       label(for="parent_id") Danh mục cha
       select(
+        name="parent_id"
         class="form-control"
         id="parent_id"
-        name="parent_id"
       )
-        option(value="") -- Chọn danh mục --
-        if(categories) 
-          +select-tree(categories)
+        option(value="") -- Chọn danh mục cha --
+        if(categories)
+          +select-tree(categories, 1, category.parent_id)
     div(class="form-group")
       label(for="desc") Mô tả
       textarea(
@@ -37,7 +38,7 @@ block main
         name="description"
         rows="5"
         textarea-mce
-      )
+      ) #{category.description}
     div(
       class="form-group"
       upload-image
@@ -52,7 +53,7 @@ block main
         upload-image-input
       )
       img(
-        src=""
+        src=category.thumbnail
         class="image-preview"
         upload-image-preview
       )
@@ -65,6 +66,7 @@ block main
         name="position"
         placeholder="Tự động tăng"
         min="1"
+        value=category.position
       )
     div(class="form-group form-check form-check-inline")
       input(
@@ -73,7 +75,7 @@ block main
         id="statusActive"
         name="status"
         value="active"
-        checked
+        checked=(category.status == "active" ? true : false)
       )
       label(for="statusActive" class="form-check-label") Hoạt động
     div(class="form-group form-check form-check-inline")
@@ -83,10 +85,11 @@ block main
         id="statusInActive"
         name="status"
         value="inactive"
+        checked=(category.status == "inactive" ? true : false)
       )
       label(for="statusInActive" class="form-check-label") Dừng hoạt động
     div(class="form-group")
       button(
         type="submit"
         class="btn btn-primary"
-      ) Tạo mới
+      ) Cập nhật
