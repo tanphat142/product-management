@@ -116,15 +116,17 @@ if (showAlert) {
 
 // Preview ảnh
 const uploadImage = document.querySelector("[upload-image]");
-if(uploadImage) {
+if (uploadImage) {
   const uploadImageInput = uploadImage.querySelector("[upload-image-input]");
-  const uploadImagePreview = uploadImage.querySelector("[upload-image-preview]");
+  const uploadImagePreview = uploadImage.querySelector(
+    "[upload-image-preview]"
+  );
   const closeButton = uploadImage.querySelector("[close-preview]");
 
   uploadImageInput.addEventListener("change", () => {
     // uploadImageInput la e.target ma trong e.target co thuoc tinh files
     const file = uploadImageInput.files[0];
-    if(file) {
+    if (file) {
       uploadImagePreview.src = URL.createObjectURL(file);
       closeButton.classList.add("centered-close");
     }
@@ -137,3 +139,4 @@ if(uploadImage) {
   });
 }
 // Hết Preview ảnh
+
