@@ -8,6 +8,8 @@ const paginationHelper = require("../../helpers/pagination.helper");
 
 const createTreeHelper = require("../../helpers/createTree.helper");
 
+const Account = require("../../models/account.model");
+
 // [GET] /admin/products
 module.exports.index = async (req, res) => {
   // console.log(req.query.status);
@@ -68,6 +70,45 @@ module.exports.index = async (req, res) => {
     .skip(pagination.skip)
     .sort(sort);
 
+  //logs lịch sử thay đổi sản phẩm
+  for (const item of products) {
+    // Tạo bởi
+    const infoCreated = await Account.findOne({
+      _id: item.createdBy,
+    });
+
+    if (infoCreated) {
+      item.createdByFullName = infoCreated.fullName;
+    } else {
+      item.createdByFullName = "";
+    }
+
+    // Cập nhật bởi
+    //logs(1)
+    // const infoUpdated = await Account.findOne({
+    //   _id: item.updatedBy,
+    // });
+
+    // if (infoUpdated) {
+    //   item.updatedByFullName = infoUpdated.fullName;
+    // } else {
+    //   item.updatedByFullName = "";
+    // }
+    //logs(nhiều) lấy thằng mới nhất
+    const updatedBy = item.updatedBy.slice(-1)[0];
+    if (updatedBy) {
+      const infoUpdated = await Account.findOne({
+        _id: updatedBy.account_id,
+      });
+      
+      if (infoUpdated) {
+        updatedBy.accountFullName = infoUpdated.fullName;
+      } else {
+        updatedBy.accountFullName = "";
+      }
+    }
+  }
+
   res.render("admin/pages/products/index", {
     pageTitle: "Danh sách sản phẩm",
     products: products,
@@ -81,12 +122,23 @@ module.exports.index = async (req, res) => {
 module.exports.changeStatus = async (req, res) => {
   const { status, id } = req.body;
 
+  //thêm logs (lưu nhiều)
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
   await Product.updateOne(
     {
       _id: id,
     },
     {
       status: status,
+      // thêm logs(lưu 1)
+      // updatedBy: res.locals.user.id,
+      // updatedAt: new Date(),
+
+      $push: { updatedBy: updatedBy },
     }
   );
 
@@ -103,6 +155,12 @@ module.exports.changeStatus = async (req, res) => {
 module.exports.changeMulti = async (req, res) => {
   const { status, ids } = req.body;
 
+  //thêm logs (lưu nhiều)
+  const updatedBy = {
+    account_id: res.locals.user.id,
+    updatedAt: new Date(),
+  };
+
   switch (status) {
     case "active":
     case "inactive":
@@ -112,6 +170,10 @@ module.exports.changeMulti = async (req, res) => {
         },
         {
           status: status,
+          // logs(lưu 1)
+          // updatedBy: res.locals.user.id,
+          // updatedAt: new Date(),
+          $push: { updatedBy: updatedBy },
         }
       );
 
@@ -129,7 +191,8 @@ module.exports.changeMulti = async (req, res) => {
         },
         {
           deleted: true,
-          deleteAt: new Date(),
+          deletedBy: res.locals.user.id,
+          deletedAt: new Date(),
         }
       );
 
@@ -153,6 +216,9 @@ module.exports.changeMulti = async (req, res) => {
           },
           {
             position: position,
+            // updatedBy: res.locals.user.id,
+            // updatedAt: new Date(),
+            $push: { updatedBy: updatedBy },
           }
         );
       }
@@ -195,7 +261,8 @@ module.exports.delete = async (req, res) => {
     {
       deleted: true,
       //thêm trường deleteAt để biết thời gian xóa
-      deleteAt: new Date(),
+      deletedBy: res.locals.user.id,
+      deletedAt: new Date(),
     }
   );
 
@@ -217,6 +284,8 @@ module.exports.delete = async (req, res) => {
 //     },
 //     {
 //       position: req.body.position,
+//       updatedBy: res.locals.user.id,
+//       updatedAt: new Date()
 //     }
 //   );
 
@@ -228,7 +297,6 @@ module.exports.delete = async (req, res) => {
 // };
 
 // [GET] /admin/products/create
-
 module.exports.create = async (req, res) => {
   const categories = await ProductCategory.find({
     deleted: false,
@@ -244,8 +312,12 @@ module.exports.create = async (req, res) => {
 // [POST] /admin/products/create
 module.exports.createPost = async (req, res) => {
   req.body.price = parseInt(req.body.price);
-  req.body.discountPercentage = parseInt(req.body.discountPercentage);
+  req.body.discountPercentage = parseFloat(req.body.discountPercentage);
   req.body.stock = parseInt(req.body.stock);
+
+  //thêm trường lưu logs
+  req.body.createdBy = res.locals.user.id;
+  req.body.createdAt = new Date();
 
   if (req.body.position) {
     req.body.position = parseInt(req.body.position);
@@ -311,8 +383,13 @@ module.exports.editPatch = async (req, res) => {
     // }
 
     req.body.price = parseInt(req.body.price);
-    req.body.discountPercentage = parseInt(req.body.discountPercentage);
+    req.body.discountPercentage = parseFloat(req.body.discountPercentage);
     req.body.stock = parseInt(req.body.stock);
+
+    // thêm logs lịch sử (lưu 1)
+    // req.body.updatedBy = res.locals.user.id;
+    // req.body.updatedAt = new Date();
+
     if (req.body.position) {
       req.body.position = parseInt(req.body.position);
     } else {
@@ -320,12 +397,21 @@ module.exports.editPatch = async (req, res) => {
       req.body.position = countProducts + 1;
     }
 
+    //thêm logs (lưu nhiều)
+    const updatedBy = {
+      account_id: res.locals.user.id,
+      updatedAt: new Date(),
+    };
+
     await Product.updateOne(
       {
         _id: id,
         deleted: false,
       },
-      req.body
+      {
+        ...req.body,
+        $push: { updatedBy: updatedBy },
+      }
     );
 
     req.flash("success", "Cập nhật sản phẩm thành công!");

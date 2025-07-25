@@ -4,10 +4,14 @@ const systemConfig = require("../../config/system");
 
 // [GET] /admin/auth/login
 module.exports.login = (req, res) => {
-  res.render("admin/pages/auth/login", {
-    pageTitle: "Đăng nhập"
-  });
-}
+  if (req.cookies.token) {
+    res.redirect(`/${systemConfig.prefixAdmin}/dashboard`);
+  } else {
+    res.render("admin/pages/auth/login", {
+      pageTitle: "Đăng nhập",
+    });
+  }
+};
 
 // [POST] /admin/auth/login
 module.exports.loginPost = async (req, res) => {
@@ -17,22 +21,22 @@ module.exports.loginPost = async (req, res) => {
 
   const account = await Account.findOne({
     email: email,
-    deleted: false
+    deleted: false,
   });
 
-  if(!account) {
+  if (!account) {
     req.flash("error", "Email không tồn tại trong hệ thống!");
     res.redirect(referer);
     return;
   }
 
-  if(md5(password) != account.password) {
+  if (md5(password) != account.password) {
     req.flash("error", "Sai mật khẩu!");
     res.redirect(referer);
     return;
   }
 
-  if(account.status != "active") {
+  if (account.status != "active") {
     req.flash("error", "Tài khoản đang bị khóa!");
     res.redirect(referer);
     return;
@@ -40,10 +44,10 @@ module.exports.loginPost = async (req, res) => {
 
   res.cookie("token", account.token);
   res.redirect(`/${systemConfig.prefixAdmin}/dashboard`);
-}
+};
 
 // [GET] /admin/auth/logout
 module.exports.logout = async (req, res) => {
   res.clearCookie("token");
   res.redirect(`/${systemConfig.prefixAdmin}/auth/login`);
-}
+};

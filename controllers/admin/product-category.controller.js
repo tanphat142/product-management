@@ -35,6 +35,25 @@ module.exports.create = async (req, res) => {
 
 // [POST] /admin/products-category/create
 module.exports.createPost = async (req, res) => {
+  // nay de kiem tra xem co bi hack bang postman khi bi lo url (check ben BE)
+  // const permissions = res.locals.role.permissions;
+
+  // if (permissions.includes("products-category_create")) {
+  //   if (req.body.position) {
+  //     req.body.position = parseInt(req.body.position);
+  //   } else {
+  //     const countRecord = await ProductCategory.countDocuments();
+  //     req.body.position = countRecord + 1;
+  //   }
+
+  //   const record = new ProductCategory(req.body);
+  //   await record.save();
+
+  //   res.redirect(`/${systemConfig.prefixAdmin}/products-category`);
+  // } else {
+  //   return;
+  // }
+
   if (req.body.position) {
     req.body.position = parseInt(req.body.position);
   } else {

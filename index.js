@@ -5,6 +5,10 @@ const bodyParser = require('body-parser');
 
 // dùng để hiển thị thông báo
 const flash = require('express-flash');
+
+// moment chuyển dạng số Date thành ngày bình thường
+const moment = require("moment");
+
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const methodOverride = require('method-override');
@@ -30,6 +34,7 @@ app.set("view engine", "pug");
 
 // Khai báo biến toàn cục cho file pug
 app.locals.prefixAdmin = systemConfig.prefixAdmin;
+app.locals.moment = moment;
 
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));

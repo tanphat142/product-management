@@ -7,32 +7,39 @@ mongoose.plugin(slug);
 
 // ví dụ tiêu đề là "Sản phẩm 1" thì slug sẽ là "san-pham-1"
 
-const productSchema = new mongoose.Schema(
-  {
-    title: String,
-    product_category_id: String,
-    description: String,
-    price: Number,
-    discountPercentage: Number,
-    stock: Number,
-    thumbnail: String,
-    status: String,
-    position: Number,
-    slug: {
-      type: String,
-      slug: "title",
-      unique: true,
+const productSchema = new mongoose.Schema({
+  title: String,
+  product_category_id: String,
+  description: String,
+  price: Number,
+  discountPercentage: Number,
+  stock: Number,
+  thumbnail: String,
+  status: String,
+  position: Number,
+  createdBy: String,
+  createdAt: Date,
+  // updatedBy: String,
+  // updatedAt: Date,
+  updatedBy: [
+    {
+      account_id: String,
+      updatedAt: Date,
     },
-    deleted: {
-      type: Boolean,
-      default: false,
-    },
-    deleteAt: Date,
+  ],
+  featured: String,
+  slug: {
+    type: String,
+    slug: "title",
+    unique: true,
   },
-  {
-    timestamps: true, // Tự động thêm trường createdAt và updatedAt (https://mongoosejs.com/docs/timestamps.html)
-  }
-);
+  deleted: {
+    type: Boolean,
+    default: false,
+  },
+  deletedBy: String,
+  deletedAt: Date,
+});
 
 const Product = mongoose.model("Product", productSchema, "products");
 

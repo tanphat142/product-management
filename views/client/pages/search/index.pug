@@ -4,9 +4,10 @@ include ../../mixins/product-item.pug
 
 block main
   .container.my-3
-    +box-head(pageTitle)
-    
+    .row
+      .col-12
+        +box-head("Kết quả tìm kiếm: " + keyword)
+
     .row
       each item in products
         +product-item(item)
-
