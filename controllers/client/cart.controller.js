@@ -1,6 +1,8 @@
 const Cart = require("../../models/cart.model");
 const Product = require("../../models/product.model");
 
+const productsHelper = require("../../helpers/products.helper");
+
 // [GET] /cart
 module.exports.index = async (req, res) => {
   const cartId = req.cookies.cartId;
@@ -16,8 +18,7 @@ module.exports.index = async (req, res) => {
       const productInfo = await Product.findOne({
         _id: product.productId,
       }).select("title thumbnail slug price discountPercentage");
-      productInfo.priceNew =
-        (1 - productInfo.discountPercentage / 100) * productInfo.price;
+      productInfo.priceNew = productsHelper.priceNewProduct(productInfo);
       product.productInfo = productInfo;
       product.totalPrice = productInfo.priceNew * product.quantity;
       cart.totalPrice += product.totalPrice;
@@ -95,6 +96,29 @@ module.exports.delete = async (req, res) => {
         products: {
           productId: productId,
         },
+      },
+    }
+  );
+
+  req.flash("success", "Đã xóa sản phẩm khỏi giỏ hàng!");
+  res.redirect(referer);
+};
+
+// [GET] /cart/update/:productId/:quantity
+module.exports.update = async (req, res) => {
+  const referer = req.get("referer");
+  const cartId = req.cookies.cartId;
+  const productId = req.params.productId;
+  const quantity = parseInt(req.params.quantity);
+
+  await Cart.updateOne(
+    {
+      _id: cartId,
+      "products.productId": productId,
+    },
+    {
+      $set: {
+        "products.$.quantity": quantity,
       },
     }
   );
