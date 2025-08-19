@@ -4,7 +4,7 @@ const multer  = require('multer');
 
 const upload = multer();
 
-const uploadCloud = require("../../‎middleware/admin/uploadCloud.middleware");
+const uploadCloud = require("../../middlewares/admin/uploadCloud.middleware");
 
 const controller = require("../../controllers/admin/account.controller");
 

@@ -6,11 +6,18 @@ html
     title #{pageTitle}
 
     link(rel="stylesheet", href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css")
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css")
+    //- file-upload-with-preview
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/file-upload-with-preview/6.1.2/style.min.css")
+    //- viewer
+    link(rel="stylesheet", href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.css")
     link(rel="stylesheet", href="/css/style.css")
 
   body 
 
     +alert-success(3000)
+
+    +alert-error(5000)
 
     include ../partials/header.pug
 
@@ -22,4 +29,21 @@ html
 
     script(src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js") 
 
-    script(src="/js/script.js") 
+    //- file cdn emoji-picker-element
+    script(type="module" src="https://cdn.jsdelivr.net/npm/emoji-picker-element@^1/index.js") 
+
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/file-upload-with-preview/6.1.2/index.iife.min.js") 
+
+    script(src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.6/viewer.min.js") 
+
+    script(src="/socket.io/socket.io.js") 
+  
+    script(src="/js/socket.js")
+
+    //- script(type="module" src="/js/chat.js")
+
+    //- script(src="/js/users.js")
+
+    script(src="/js/script.js")
+
+    block script

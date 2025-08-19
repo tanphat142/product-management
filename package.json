@@ -26,7 +26,10 @@
     "mongoose": "^8.16.1",
     "mongoose-slug-updater": "^3.3.0",
     "multer": "^2.0.1",
+    "nodemailer": "^7.0.5",
+    "path-to-regexp": "^8.2.0",
     "pug": "^3.0.3",
+    "socket.io": "^4.8.1",
     "streamifier": "^0.1.1",
     "tinymce": "^7.9.1"
   },
